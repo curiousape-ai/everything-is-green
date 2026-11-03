@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "check:endings": "rolldown scripts/ending-paths.ts -d .check-endings -f esm >/dev/null && node .check-endings/ending-paths.js"
   },
   "devDependencies": {
     "typescript": "~7.0.2",
