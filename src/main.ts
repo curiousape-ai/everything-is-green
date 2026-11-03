@@ -6,6 +6,7 @@ import {
   checkEnding,
   advanceWeek,
 } from "./engine";
+import { endings } from "./events";
 import type { GameState, Event, Choice, Ending } from "./types";
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
@@ -13,11 +14,13 @@ const app = document.querySelector<HTMLDivElement>("#app")!;
 let state: GameState = createInitialState();
 let currentEvent: Event | null = null;
 
-function render() {
-  const ending = state.week > 6 ? checkEnding(state) : undefined;
+function finishQuarter() {
+  renderEnding(checkEnding(state) ?? endings[endings.length - 1]);
+}
 
-  if (ending) {
-    renderEnding(ending);
+function render() {
+  if (state.week > 6) {
+    finishQuarter();
     return;
   }
 
@@ -25,16 +28,8 @@ function render() {
   currentEvent = eligible.length > 0 ? eligible[0] : null;
 
   if (!currentEvent) {
-    // No event this week; advance or end
     if (state.week >= 6) {
-      const finalEnding = checkEnding(state) ?? {
-        id: "survived",
-        title: "Permanent transformation",
-        conditions: [],
-        text: "You survive the quarter. The title screen returns with a new logo and the same problems.",
-        shareCard: { headline: "Outcome: Survived", lines: ["The transformation continues."] },
-      };
-      renderEnding(finalEnding);
+      finishQuarter();
       return;
     }
     state = advanceWeek(state);
@@ -88,24 +83,8 @@ function handleChoice(choice: Choice) {
   if (!currentEvent) return;
   state = applyChoice(state, currentEvent, choice);
 
-  if (choice.endsRun) {
-    const ending = checkEnding(state);
-    if (ending) {
-      renderEnding(ending);
-      return;
-    }
-  }
-
-  // Simple: after choice, advance week
-  if (state.week >= 6) {
-    const ending = checkEnding(state) ?? {
-      id: "survived",
-      title: "You made it",
-      conditions: [],
-      text: "The quarter ends. Something happened. The organisation continues.",
-      shareCard: { headline: "Quarter complete", lines: ["See you next quarter."] },
-    };
-    renderEnding(ending);
+  if (choice.endsRun || state.week >= 6) {
+    finishQuarter();
     return;
   }
 

@@ -142,38 +142,50 @@ export const events: Event[] = [
   },
 ];
 
+// First match wins. A quarter the board can see belongs to them, even when the work was real.
 export const endings: Ending[] = [
+  {
+    id: "board-noticed",
+    title: "The board noticed",
+    conditions: [{ type: "resource", key: "confidence", min: 70 }],
+    text: "The review goes well. Your name is on the slide. If something useful shipped, it is now evidence for the narrative your sponsor preferred. You have been noticed.",
+    shareCard: {
+      headline: "Noted by the board",
+      lines: ["Dashboard: green", "Name on the slide: yours", "Outcome: Visible"],
+    },
+  },
   {
     id: "useful-release",
     title: "Something actually improved",
     conditions: [
       { type: "resource", key: "progress", min: 60 },
       { type: "resource", key: "trust", min: 40 },
+      { type: "resource", key: "confidence", max: 69 },
     ],
-    text: "The smaller release works. A customer benefits. Another manager presents it as evidence that smaller teams are more productive. You have enough trust left to try again next quarter.",
+    text: "The smaller release works. A customer benefits. The review mentions the work once, under someone else's name. You have enough trust left to try again next quarter.",
     shareCard: {
       headline: "Customer problem: partly solved",
-      lines: ["Progress: real", "Trust: intact", "Outcome: Useful"],
+      lines: ["Dashboard: quiet", "Trust: intact", "Outcome: Useful"],
     },
   },
   {
-    id: "empty-success",
-    title: "Executive material",
-    conditions: [{ type: "resource", key: "confidence", min: 70 }],
-    text: "The presentation is excellent. The customer outcome is ambiguous. You have been noticed.",
+    id: "still-green",
+    title: "Still green",
+    conditions: [{ type: "resource", key: "confidence", min: 50 }],
+    text: "The dashboard held all quarter. Nothing important failed in public, and nothing important clearly shipped. The review is short. Your name is not in it.",
     shareCard: {
-      headline: "Projects reported green: 100%",
-      lines: ["Progress: unclear", "Confidence: high", "Outcome: Promoted"],
+      headline: "Status held",
+      lines: ["Exceptions: none recorded", "Attention: none received", "Outcome: Still green"],
     },
   },
   {
     id: "honest-account",
     title: "Failed delivery, honest account",
-    conditions: [{ type: "resource", key: "progress", max: 40 }],
-    text: "The delivery does not land. Your account of events and the official explanation are presented side by side. The record exists.",
+    conditions: [{ type: "resource", key: "confidence", max: 49 }],
+    text: "The delivery does not land, and the dashboard does not hide it. Your account of events and the official explanation are presented side by side. The record exists.",
     shareCard: {
       headline: "Delivery: incomplete",
-      lines: ["Progress: low", "Account: honest", "Outcome: Managed"],
+      lines: ["Dashboard: not green", "Account: on the record", "Outcome: Managed"],
     },
   },
 ];
