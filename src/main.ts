@@ -26,6 +26,9 @@ interface PendingOutcome {
   summary: string;
   deltas: { key: ResourceKey; before: number; after: number }[];
   endsRun: boolean;
+  slots?: string[];
+  keeps?: string[];
+  afterHours?: boolean;
 }
 
 let pending: PendingOutcome | null = null;
@@ -62,6 +65,19 @@ function resourceStrip(resources: Record<ResourceKey, number>): string {
     (key) =>
       `<span class="resource ${resourceBand(key, resources[key])}">${RESOURCE_LABELS[key]}: ${resources[key]}</span>`
   ).join("");
+}
+
+function slotList(slots: string[], keeps?: string[], afterHours?: boolean): string {
+  const items = slots
+    .map((slot) => {
+      if (!keeps) return `<li>${slot}</li>`;
+      const kept = keeps.includes(slot);
+      const cls = kept ? (afterHours ? "kept after-hours" : "kept") : "dropped";
+      const label = kept ? (afterHours ? "After hours" : "Done") : "Waits";
+      return `<li class="${cls}">${slot}<span class="slot-state">${label}</span></li>`;
+    })
+    .join("");
+  return `<ul class="slots">${items}</ul>`;
 }
 
 function finishQuarter() {
@@ -124,11 +140,7 @@ function render() {
       <main>
         <h2>${currentEvent.title}</h2>
         <p>${currentEvent.text}</p>
-        ${
-          currentEvent.slots?.length
-            ? `<ul class="slots">${currentEvent.slots.map((s) => `<li>${s}</li>`).join("")}</ul>`
-            : ""
-        }
+        ${currentEvent.slots?.length ? slotList(currentEvent.slots) : ""}
         <div class="choices">
           ${currentEvent.choices
             .map(
@@ -158,6 +170,9 @@ function handleChoice(choice: Choice) {
     summary: choice.outcomeText ?? choice.text,
     deltas: resourceDeltas(before, state.resources),
     endsRun: Boolean(choice.endsRun) || state.week >= 6,
+    slots: currentEvent.slots,
+    keeps: choice.keeps,
+    afterHours: choice.afterHours,
   };
   renderOutcome();
 }
@@ -181,6 +196,11 @@ function renderOutcome() {
       <main>
         <h2>After that</h2>
         <p>${pending.summary}</p>
+        ${
+          pending.slots?.length
+            ? slotList(pending.slots, pending.keeps, pending.afterHours)
+            : ""
+        }
         ${deltaLines ? `<ul class="deltas">${deltaLines}</ul>` : ""}
         <div class="choices">
           <button id="continue">${continueLabel}</button>

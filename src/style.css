@@ -123,12 +123,48 @@ button:hover {
 }
 
 .slots li {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
   margin: 0;
   padding: 0.7rem 0.8rem;
   background: #e7efe8;
   border: 1px solid #c9d5cc;
   border-radius: 10px;
   font-size: 0.9rem;
+}
+
+.slot-state {
+  font-size: 0.75rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #5d6b62;
+}
+
+.slots li.kept {
+  border-color: #128a38;
+}
+
+.slots li.kept .slot-state {
+  color: #128a38;
+}
+
+.slots li.after-hours {
+  border-color: #8a4b32;
+}
+
+.slots li.after-hours .slot-state {
+  color: #8a4b32;
+}
+
+.slots li.dropped {
+  background: #f7f3ef;
+  border-color: #e0d2c8;
+  color: #8a4b32;
+}
+
+.slots li.dropped .slot-state {
+  color: #8a4b32;
 }
 
 @media (max-width: 560px) {

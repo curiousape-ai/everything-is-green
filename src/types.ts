@@ -48,6 +48,8 @@ export interface Choice {
   schedules?: { eventId: string; delayWeeks: number }[];
   outcomeText?: string;
   endsRun?: boolean;
+  keeps?: string[];
+  afterHours?: boolean;
 }
 
 export interface Event {

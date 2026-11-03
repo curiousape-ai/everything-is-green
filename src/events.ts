@@ -238,13 +238,13 @@ export const events: Event[] = [
   },
   {
     id: "friday-demo-pressure",
-    title: "You only have time for two",
+    title: "You only have time for one",
     conditions: [
       { type: "week", min: 5, max: 5 },
       { type: "notSeen", eventId: "friday-demo-pressure" },
     ],
     weight: 15,
-    text: "Your engineer needs a decision on the customer change. Your manager needs the board slide. A mandatory meeting has just landed. You only have time for two of them. The evening is the only way to do all three.",
+    text: "Your engineer needs a decision on the customer change. Your manager needs the board slide. A mandatory meeting has just landed. You only have time for one of them today. The other two wait, unless you take the evening.",
     slots: ["The customer change", "The board slide", "The mandatory meeting"],
     choices: [
       {
@@ -256,6 +256,7 @@ export const events: Event[] = [
           { type: "resource", key: "energy", delta: -5 },
         ],
         relationshipDeltas: { engineer: 10 },
+        keeps: ["The customer change"],
         outcomeText: "The change ships. The slide will have to wait. Your engineer is relieved.",
       },
       {
@@ -269,6 +270,7 @@ export const events: Event[] = [
           id: "demo-ready",
           description: "Promised the demo would look strong",
         },
+        keeps: ["The board slide"],
         outcomeText: "The slide looks healthier. The engineer is still waiting on the decision.",
       },
       {
@@ -279,6 +281,7 @@ export const events: Event[] = [
           { type: "resource", key: "trust", delta: 5 },
         ],
         sets: { declinedMeeting: true },
+        keeps: ["The mandatory meeting"],
         outcomeText: "You get the afternoon back. Someone upstairs notes the absence.",
       },
       {
@@ -289,6 +292,8 @@ export const events: Event[] = [
           { type: "resource", key: "confidence", delta: 8 },
           { type: "resource", key: "energy", delta: -20 },
         ],
+        keeps: ["The customer change", "The board slide", "The mandatory meeting"],
+        afterHours: true,
         outcomeText: "Everything moves. You are exhausted. The work is done; the cost is not yet visible.",
       },
     ],

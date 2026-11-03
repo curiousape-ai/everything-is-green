@@ -26,4 +26,4 @@ Events are data. Adding or changing one should be a small, reviewable change.
 
 ## First slice
 
-Six weeks: a late dependency, the original date, Status Monday or a quiet fix that surfaces, a restructure, time for two of three, and a review that follows the restructure. Four endings. After each choice the player sees the cost before the next week or the slide.
+Six weeks: a late dependency, the original date, Status Monday or a quiet fix that surfaces, a restructure, time for one of three unless you take the evening, and a review that follows the restructure. Four endings. After each choice the player sees the cost before the next week or the slide.
