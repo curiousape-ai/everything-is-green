@@ -2,9 +2,178 @@ import type { Event, Ending } from "./types";
 
 export const events: Event[] = [
   {
+    id: "quiet-fix-surfaces",
+    title: "The quiet fix surfaces",
+    conditions: [
+      { type: "week", min: 3, max: 3 },
+      { type: "notSeen", eventId: "quiet-fix-surfaces" },
+      { type: "promise", id: "quiet-fix" },
+    ],
+    text: "The dependency slipped in a meeting you were not in. The date you kept green is now in the notes. Your sponsor forwards them with no comment.",
+    choices: [
+      {
+        id: "correct-notes",
+        text: "Correct the notes before the review pack.",
+        effects: [
+          { type: "resource", key: "confidence", delta: -12 },
+          { type: "resource", key: "trust", delta: 5 },
+          { type: "resource", key: "progress", delta: -5 },
+        ],
+        outcomeText: "The notes match reality. The sponsor's forward is still above them.",
+      },
+      {
+        id: "hold-date",
+        text: "Stand by the green date.",
+        effects: [
+          { type: "resource", key: "confidence", delta: 12 },
+          { type: "resource", key: "trust", delta: -15 },
+          { type: "resource", key: "energy", delta: -5 },
+        ],
+        sets: { heldTheDate: true },
+        outcomeText: "The date survives. The people who were in the meeting go quiet.",
+      },
+    ],
+  },
+  {
+    id: "status-monday",
+    title: "Status Monday",
+    conditions: [
+      { type: "week", min: 3, max: 3 },
+      { type: "notSeen", eventId: "status-monday" },
+      { type: "flag", key: "helpedDependency", equals: true },
+    ],
+    text: "The status deck is due at noon. Last week's slide is already green. Two comments under it say the dependency is not.",
+    choices: [
+      {
+        id: "send-last-week",
+        text: "Send last week's slide.",
+        effects: [
+          { type: "resource", key: "confidence", delta: 8 },
+          { type: "resource", key: "trust", delta: -20 },
+          { type: "resource", key: "energy", delta: -5 },
+        ],
+        sets: { statusCopied: true },
+        outcomeText: "The deck goes out green. The two comments stay in the file.",
+      },
+      {
+        id: "show-comments",
+        text: "Send the slide with the comments visible.",
+        effects: [
+          { type: "resource", key: "confidence", delta: -8 },
+          { type: "resource", key: "trust", delta: 8 },
+          { type: "resource", key: "progress", delta: 5 },
+        ],
+        sets: { toldStatusStraight: true },
+        outcomeText: "The deck is slower to read. The dependency is on it. Your sponsor does not reply.",
+      },
+    ],
+  },
+  {
+    id: "review-with-engineer",
+    title: "Your engineer stays for the review",
+    conditions: [
+      { type: "week", min: 6, max: 6 },
+      { type: "notSeen", eventId: "review-with-engineer" },
+      { type: "flag", key: "engineerStayed", equals: true },
+    ],
+    text: "The consultation kept them. They are in the review with the working change and no slide. The new executive asks who owns the date.",
+    choices: [
+      {
+        id: "show-the-change",
+        text: "Let them show the working change.",
+        effects: [
+          { type: "resource", key: "progress", delta: 12 },
+          { type: "resource", key: "confidence", delta: 4 },
+          { type: "resource", key: "trust", delta: 5 },
+        ],
+        relationshipDeltas: { engineer: 10 },
+        outcomeText: "The change is shown in the meeting. The executive asks for the one-page version.",
+      },
+      {
+        id: "answer-for-them",
+        text: "Answer for them and keep the pack green.",
+        effects: [
+          { type: "resource", key: "confidence", delta: 12 },
+          { type: "resource", key: "trust", delta: -5 },
+        ],
+        outcomeText: "You take the question. The pack stays green. Your engineer closes the laptop.",
+      },
+      {
+        id: "show-and-own",
+        text: "Show the change and take the question.",
+        effects: [
+          { type: "resource", key: "progress", delta: 10 },
+          { type: "resource", key: "confidence", delta: 15 },
+        ],
+        outcomeText: "The change is shown. You are also on the slide. The executive thanks you by name.",
+      },
+    ],
+  },
+  {
+    id: "review-with-trail",
+    title: "The trail is in the appendix",
+    conditions: [
+      { type: "week", min: 6, max: 6 },
+      { type: "notSeen", eventId: "review-with-trail" },
+      { type: "flag", key: "documentedTrail", equals: true },
+    ],
+    text: "You attached the decision trail. The pack still opens on the green slide. Someone has asked which page the board is meant to read.",
+    choices: [
+      {
+        id: "trail-to-front",
+        text: "Move the trail to the front.",
+        effects: [
+          { type: "resource", key: "confidence", delta: -10 },
+          { type: "resource", key: "trust", delta: 5 },
+          { type: "resource", key: "progress", delta: 5 },
+        ],
+        outcomeText: "The pack opens on the trail. The green slide is page four.",
+      },
+      {
+        id: "leave-appendix",
+        text: "Leave the trail in the appendix.",
+        effects: [
+          { type: "resource", key: "confidence", delta: 8 },
+          { type: "resource", key: "trust", delta: -10 },
+        ],
+        outcomeText: "The pack opens green. The trail is there for anyone who reaches page nine.",
+      },
+    ],
+  },
+  {
+    id: "review-pack",
+    title: "The review pack",
+    conditions: [
+      { type: "week", min: 6, max: 6 },
+      { type: "notSeen", eventId: "review-pack" },
+    ],
+    text: "The pack is due at four. Every line is green. The customer change is still behind a decision you have not written down.",
+    choices: [
+      {
+        id: "file-green",
+        text: "File the green pack.",
+        effects: [{ type: "resource", key: "confidence", delta: 8 }],
+        outcomeText: "The pack is filed. The change waits in the branch.",
+      },
+      {
+        id: "hold-pack",
+        text: "Hold the pack and write the decision.",
+        effects: [
+          { type: "resource", key: "confidence", delta: -8 },
+          { type: "resource", key: "progress", delta: 8 },
+          { type: "resource", key: "trust", delta: 5 },
+        ],
+        outcomeText: "The pack goes out late. The decision is in it. Four is no longer the deadline that matters.",
+      },
+    ],
+  },
+  {
     id: "dependency-late",
     title: "The dependency is late",
-    conditions: [{ type: "week", min: 1, max: 2 }],
+    conditions: [
+      { type: "week", min: 1, max: 1 },
+      { type: "notSeen", eventId: "dependency-late" },
+    ],
     weight: 10,
     text: "The team you depend on has slipped. Their lead says the original date is no longer realistic. Your sponsor has not been told.",
     choices: [
@@ -38,7 +207,10 @@ export const events: Event[] = [
   {
     id: "sponsor-promise",
     title: "The original date",
-    conditions: [{ type: "week", min: 2, max: 3 }],
+    conditions: [
+      { type: "week", min: 2, max: 2 },
+      { type: "notSeen", eventId: "sponsor-promise" },
+    ],
     weight: 8,
     text: "Your sponsor wants you to promise the original launch date for the board presentation. They know the dependency is shaky but prefer not to hear it.",
     choices: [
@@ -67,7 +239,10 @@ export const events: Event[] = [
   {
     id: "friday-demo-pressure",
     title: "Two slots left",
-    conditions: [{ type: "week", min: 5, max: 6 }],
+    conditions: [
+      { type: "week", min: 5, max: 5 },
+      { type: "notSeen", eventId: "friday-demo-pressure" },
+    ],
     weight: 15,
     text: "You have two attention slots left. Your engineer needs a decision to finish the change that helps customers. Your manager needs the board slide. A mandatory meeting has just landed in your calendar.",
     choices: [
@@ -120,7 +295,10 @@ export const events: Event[] = [
   {
     id: "restructure",
     title: "Strategic realignment",
-    conditions: [{ type: "week", min: 4, max: 5 }],
+    conditions: [
+      { type: "week", min: 4, max: 4 },
+      { type: "notSeen", eventId: "restructure" },
+    ],
     weight: 20,
     text: "A restructure is announced. Both teams move under a new executive. The consultation closes Friday. The new email signatures are already available.",
     choices: [
@@ -137,6 +315,15 @@ export const events: Event[] = [
         effects: [{ type: "resource", key: "confidence", delta: -5 }],
         sets: { documentedTrail: true },
         outcomeText: "The paper trail exists. Institutional memory may not.",
+      },
+      {
+        id: "neutral-note",
+        text: "Send a neutral note and wait.",
+        effects: [
+          { type: "resource", key: "confidence", delta: -3 },
+          { type: "resource", key: "energy", delta: -5 },
+        ],
+        outcomeText: "You are on the record as having received the announcement. Nothing else is.",
       },
     ],
   },
