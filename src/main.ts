@@ -29,6 +29,7 @@ interface PendingOutcome {
 }
 
 let pending: PendingOutcome | null = null;
+let lastReview: { title: string; green: number } | null = null;
 
 function resourceDeltas(
   before: Record<ResourceKey, number>,
@@ -64,7 +65,35 @@ function resourceStrip(resources: Record<ResourceKey, number>): string {
 }
 
 function finishQuarter() {
-  renderEnding(checkEnding(state) ?? endings[endings.length - 1]);
+  const ending = checkEnding(state) ?? endings[endings.length - 1];
+  lastReview = { title: ending.title, green: state.resources.confidence };
+  renderEnding(ending);
+}
+
+function renderTitle() {
+  app.innerHTML = `
+    <div class="desktop title-screen">
+      <p class="share-kicker">Quarterly review</p>
+      <h1>Everything Is Green</h1>
+      <p>Keep the dashboard green until the next review.</p>
+      ${
+        lastReview
+          ? `<p class="last-quarter">Last quarter: ${lastReview.title}. You stayed ${lastReview.green}% green.</p>`
+          : ""
+      }
+      <div class="choices">
+        <button id="start">${lastReview ? "Try another approach" : "Start the quarter"}</button>
+      </div>
+    </div>
+  `;
+  document.getElementById("start")?.addEventListener("click", startQuarter);
+}
+
+function startQuarter() {
+  pending = null;
+  currentEvent = null;
+  state = createInitialState();
+  render();
 }
 
 function render() {
@@ -108,13 +137,6 @@ function render() {
             )
             .join("")}
         </div>
-        ${
-          state.history.length > 0
-            ? `<div class="history"><small>Last: ${
-                state.history[state.history.length - 1].summary
-              }</small></div>`
-            : ""
-        }
       </main>
     </div>
   `;
@@ -203,14 +225,13 @@ function renderEnding(ending: Ending) {
         <p class="share-customer">${customerLine(state.resources.progress)}</p>
         ${last ? `<p class="decision">Decision that mattered: ${last.summary}</p>` : ""}
       </div>
-      <button id="restart">Restart</button>
+      <button id="restart">See the title</button>
     </div>
   `;
   document.getElementById("restart")?.addEventListener("click", () => {
     pending = null;
-    state = createInitialState();
-    render();
+    renderTitle();
   });
 }
 
-render();
+renderTitle();

@@ -96,10 +96,15 @@ button:hover {
   text-align: center;
 }
 
-.history {
-  margin-top: 1.5rem;
-  color: #5d6b62;
-  font-size: 0.85rem;
+.title-screen h1 {
+  margin: 0.4rem 0 0.75rem;
+  font-size: 2rem;
+  letter-spacing: -0.03em;
+}
+
+.last-quarter {
+  margin-top: 1.25rem;
+  font-weight: 600;
 }
 
 .deltas {
