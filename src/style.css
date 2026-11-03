@@ -66,6 +66,31 @@ header {
   color: #8a4b32;
 }
 
+.people,
+.people-delta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  color: #3d4f44;
+}
+
+.people li,
+.people-delta li {
+  margin: 0;
+}
+
+.people span {
+  font-variant-numeric: tabular-nums;
+}
+
+.people-delta {
+  margin: 0.75rem 0 0;
+  font-weight: 600;
+}
+
 h2 {
   margin: 0 0 0.75rem 0;
   font-size: 1.35rem;

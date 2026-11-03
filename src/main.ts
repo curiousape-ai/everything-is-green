@@ -7,7 +7,7 @@ import {
   advanceWeek,
 } from "./engine";
 import { endings } from "./events";
-import { JOB_LABELS, signedChange } from "./desk";
+import { JOB_LABELS, PEOPLE, relationshipLine, signedChange } from "./desk";
 import type { GameState, Event, Choice, Ending, ResourceKey } from "./types";
 
 const RESOURCE_ORDER: ResourceKey[] = ["progress", "confidence", "trust", "energy"];
@@ -20,6 +20,7 @@ let currentEvent: Event | null = null;
 interface PendingOutcome {
   summary: string;
   deltas: { key: ResourceKey; before: number; after: number }[];
+  people: { id: string; delta: number }[];
   endsRun: boolean;
   slots?: string[];
   keeps?: string[];
@@ -56,6 +57,32 @@ function resourceStrip(resources: Record<ResourceKey, number>): string {
     (key) =>
       `<span class="resource ${resourceBand(key, resources[key])}">${JOB_LABELS[key]} ${resources[key]}</span>`
   ).join("");
+}
+
+function peopleRow(relationships: Record<string, number>): string {
+  const items = PEOPLE.map(
+    (person) =>
+      `<li class="person" data-person="${person.id}">${person.name} <span>${relationships[person.id] ?? 0}</span></li>`
+  ).join("");
+  return `<ul class="people">${items}</ul>`;
+}
+
+function peopleDeltaList(people: { id: string; delta: number }[]): string {
+  if (!people.length) return "";
+  const items = people
+    .map((person) => `<li>${relationshipLine(person.id, person.delta)}</li>`)
+    .join("");
+  return `<ul class="people-delta">${items}</ul>`;
+}
+
+function relationshipDeltas(
+  before: Record<string, number>,
+  after: Record<string, number>
+) {
+  const ids = new Set([...Object.keys(before), ...Object.keys(after)]);
+  return [...ids]
+    .filter((id) => (before[id] ?? 0) !== (after[id] ?? 0))
+    .map((id) => ({ id, delta: (after[id] ?? 0) - (before[id] ?? 0) }));
 }
 
 function slotList(slots: string[], keeps?: string[], afterHours?: boolean): string {
@@ -127,6 +154,7 @@ function render() {
       <header>
         <div class="week">Week ${state.week}</div>
         <div class="resources">${resourceStrip(state.resources)}</div>
+        ${peopleRow(state.relationships)}
       </header>
       <main>
         <h2>${currentEvent.title}</h2>
@@ -156,10 +184,12 @@ function render() {
 function handleChoice(choice: Choice) {
   if (!currentEvent) return;
   const before = { ...state.resources };
+  const beforePeople = { ...state.relationships };
   state = applyChoice(state, currentEvent, choice);
   pending = {
     summary: choice.outcomeText ?? choice.text,
     deltas: resourceDeltas(before, state.resources),
+    people: relationshipDeltas(beforePeople, state.relationships),
     endsRun: Boolean(choice.endsRun) || state.week >= 6,
     slots: currentEvent.slots,
     keeps: choice.keeps,
@@ -183,10 +213,12 @@ function renderOutcome() {
       <header>
         <div class="week">Week ${state.week}</div>
         <div class="resources">${resourceStrip(state.resources)}</div>
+        ${peopleRow(state.relationships)}
       </header>
       <main>
         <h2>After that</h2>
         <p>${pending.summary}</p>
+        ${peopleDeltaList(pending.people)}
         ${
           pending.slots?.length
             ? slotList(pending.slots, pending.keeps, pending.afterHours)
