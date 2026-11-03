@@ -5,6 +5,7 @@ import {
   checkEnding,
   advanceWeek,
 } from "../src/engine.ts";
+import { JOB_LABELS, PEOPLE, relationshipLine } from "../src/desk.ts";
 
 const PATHS: { name: string; choices: string[]; ending: string }[] = [
   {
@@ -121,17 +122,55 @@ function snapshot(rows: ReturnType<typeof runOnce>) {
   }));
 }
 
+function reportEarly() {
+  const before = createInitialState();
+  const event = getEligibleEvents(before)[0];
+  const choice = event?.choices.find((c) => c.id === "report-early");
+  if (!event || !choice) {
+    throw new Error("report-early is not on the first eligible event");
+  }
+  const after = applyChoice(before, event, choice);
+  const delta =
+    (after.relationships.dependencyLead ?? 0) -
+    (before.relationships.dependencyLead ?? 0);
+  return {
+    dependencyLead: after.relationships.dependencyLead,
+    delta,
+    line: relationshipLine("dependencyLead", delta),
+  };
+}
+
 const first = runOnce();
 const second = runOnce();
+const relFirst = reportEarly();
+const relSecond = reportEarly();
 const mismatches = first.filter((row) => row.ending !== row.expected);
 const firstSnap = JSON.stringify(snapshot(first));
 const secondSnap = JSON.stringify(snapshot(second));
 const stable = firstSnap === secondSnap;
-const ok = mismatches.length === 0 && stable;
+const relStable = JSON.stringify(relFirst) === JSON.stringify(relSecond);
+const deskOk =
+  JOB_LABELS.progress === "the work on the desk" &&
+  JOB_LABELS.confidence === "how green the slide looks" &&
+  JOB_LABELS.trust === "whether people answer" &&
+  JOB_LABELS.energy === "how late it is" &&
+  PEOPLE.some((p) => p.name === "the engineer") &&
+  PEOPLE.some((p) => p.name === "the dependency lead") &&
+  PEOPLE.some((p) => p.name === "the manager") &&
+  relFirst.dependencyLead === 15 &&
+  relFirst.line.includes("dependency lead") &&
+  relFirst.line.includes("+15");
+const ok =
+  mismatches.length === 0 && stable && relStable && deskOk;
 
 const report = {
   ok,
   stable,
+  relStable,
+  deskOk,
+  reportEarly: relFirst,
+  labels: JOB_LABELS,
+  people: PEOPLE.map((p) => p.name),
   results: first,
 };
 
