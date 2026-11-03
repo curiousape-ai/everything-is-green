@@ -57,6 +57,7 @@ export interface Event {
   weight?: number;
   text: string;
   tags?: string[];
+  slots?: string[];
   choices: Choice[];
   schedules?: { eventId: string; delayWeeks: number }[];
 }

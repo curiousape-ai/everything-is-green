@@ -245,6 +245,7 @@ export const events: Event[] = [
     ],
     weight: 15,
     text: "You have two attention slots left. Your engineer needs a decision to finish the change that helps customers. Your manager needs the board slide. A mandatory meeting has just landed in your calendar.",
+    slots: ["The customer change", "The board slide", "The mandatory meeting"],
     choices: [
       {
         id: "finish-work",

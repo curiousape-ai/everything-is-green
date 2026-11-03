@@ -95,6 +95,11 @@ function render() {
       <main>
         <h2>${currentEvent.title}</h2>
         <p>${currentEvent.text}</p>
+        ${
+          currentEvent.slots?.length
+            ? `<ul class="slots">${currentEvent.slots.map((s) => `<li>${s}</li>`).join("")}</ul>`
+            : ""
+        }
         <div class="choices">
           ${currentEvent.choices
             .map(
