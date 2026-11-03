@@ -46,7 +46,7 @@ function resourceDeltas(
 }
 
 function signedDelta(delta: number): string {
-  return delta > 0 ? `+${delta}` : `${delta}`;
+  return delta > 0 ? `+${delta}` : `\u2212${Math.abs(delta)}`;
 }
 
 function resourceBand(key: ResourceKey, value: number): "green" | "held" | "slipped" {
