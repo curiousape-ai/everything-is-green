@@ -45,6 +45,24 @@ function signedDelta(delta: number): string {
   return delta > 0 ? `+${delta}` : `${delta}`;
 }
 
+function resourceBand(key: ResourceKey, value: number): "green" | "held" | "slipped" {
+  if (key === "confidence") {
+    if (value >= 70) return "green";
+    if (value >= 50) return "held";
+    return "slipped";
+  }
+  if (value >= 60) return "green";
+  if (value >= 40) return "held";
+  return "slipped";
+}
+
+function resourceStrip(resources: Record<ResourceKey, number>): string {
+  return RESOURCE_ORDER.map(
+    (key) =>
+      `<span class="resource ${resourceBand(key, resources[key])}">${RESOURCE_LABELS[key]}: ${resources[key]}</span>`
+  ).join("");
+}
+
 function finishQuarter() {
   renderEnding(checkEnding(state) ?? endings[endings.length - 1]);
 }
@@ -72,12 +90,7 @@ function render() {
     <div class="desktop">
       <header>
         <div class="week">Week ${state.week}</div>
-        <div class="resources">
-          <span>Progress: ${state.resources.progress}</span>
-          <span>Confidence: ${state.resources.confidence}</span>
-          <span>Trust: ${state.resources.trust}</span>
-          <span>Energy: ${state.resources.energy}</span>
-        </div>
+        <div class="resources">${resourceStrip(state.resources)}</div>
       </header>
       <main>
         <h2>${currentEvent.title}</h2>
@@ -136,12 +149,7 @@ function renderOutcome() {
     <div class="desktop outcome">
       <header>
         <div class="week">Week ${state.week}</div>
-        <div class="resources">
-          <span>Progress: ${state.resources.progress}</span>
-          <span>Confidence: ${state.resources.confidence}</span>
-          <span>Trust: ${state.resources.trust}</span>
-          <span>Energy: ${state.resources.energy}</span>
-        </div>
+        <div class="resources">${resourceStrip(state.resources)}</div>
       </header>
       <main>
         <h2>After that</h2>

@@ -1,8 +1,8 @@
 :root {
   font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   line-height: 1.5;
-  color: #1a1a1a;
-  background: #f7f7f5;
+  color: #14221a;
+  background: #e8eee9;
 }
 
 body {
@@ -17,32 +17,56 @@ body {
 }
 
 .desktop {
-  background: white;
-  border: 1px solid #e0e0e0;
-  border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+  background: #f3f6f3;
+  color: #14221a;
+  border: 1px solid #c9d5cc;
+  border-radius: 18px;
+  padding: 1.5rem 1.6rem 1.7rem;
 }
 
 header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: baseline;
+  gap: 1rem;
+  flex-wrap: wrap;
   margin-bottom: 1.5rem;
   padding-bottom: 0.75rem;
-  border-bottom: 1px solid #eee;
-  font-size: 0.9rem;
-  color: #555;
+  border-bottom: 1px solid #c9d5cc;
+  font-size: 0.85rem;
+}
+
+.week {
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #5d6b62;
 }
 
 .resources {
   display: flex;
-  gap: 1rem;
+  flex-wrap: wrap;
+  gap: 0.75rem 1rem;
+}
+
+.resource {
+  font-variant-numeric: tabular-nums;
+}
+
+.resource.green {
+  color: #128a38;
+}
+
+.resource.held {
+  color: #2f8f55;
+}
+
+.resource.slipped {
+  color: #8a4b32;
 }
 
 h2 {
   margin: 0 0 0.75rem 0;
-  font-size: 1.25rem;
+  font-size: 1.35rem;
 }
 
 .choices {
@@ -53,23 +77,35 @@ h2 {
 }
 
 button {
-  background: #f0f0f0;
-  border: 1px solid #ccc;
-  border-radius: 4px;
-  padding: 0.6rem 1rem;
+  background: #e7efe8;
+  border: 1px solid #b7c7bb;
+  border-radius: 8px;
+  padding: 0.7rem 1rem;
   text-align: left;
   cursor: pointer;
   font-size: 0.95rem;
+  color: #14221a;
 }
 
 button:hover {
-  background: #e8e8e8;
+  background: #dce8de;
+}
+
+#continue,
+#restart {
+  text-align: center;
 }
 
 .history {
   margin-top: 1.5rem;
-  color: #777;
+  color: #5d6b62;
   font-size: 0.85rem;
+}
+
+.deltas {
+  margin: 1rem 0 0;
+  padding-left: 1.2rem;
+  font-variant-numeric: tabular-nums;
 }
 
 .ending h1 {
