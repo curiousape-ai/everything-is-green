@@ -7,12 +7,43 @@ import {
   advanceWeek,
 } from "./engine";
 import { endings } from "./events";
-import type { GameState, Event, Choice, Ending } from "./types";
+import type { GameState, Event, Choice, Ending, ResourceKey } from "./types";
+
+const RESOURCE_ORDER: ResourceKey[] = ["progress", "confidence", "trust", "energy"];
+const RESOURCE_LABELS: Record<ResourceKey, string> = {
+  progress: "Progress",
+  confidence: "Confidence",
+  trust: "Trust",
+  energy: "Energy",
+};
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
 let state: GameState = createInitialState();
 let currentEvent: Event | null = null;
+
+interface PendingOutcome {
+  summary: string;
+  deltas: { key: ResourceKey; before: number; after: number }[];
+  endsRun: boolean;
+}
+
+let pending: PendingOutcome | null = null;
+
+function resourceDeltas(
+  before: Record<ResourceKey, number>,
+  after: Record<ResourceKey, number>
+) {
+  return RESOURCE_ORDER.filter((key) => before[key] !== after[key]).map((key) => ({
+    key,
+    before: before[key],
+    after: after[key],
+  }));
+}
+
+function signedDelta(delta: number): string {
+  return delta > 0 ? `+${delta}` : `${delta}`;
+}
 
 function finishQuarter() {
   renderEnding(checkEnding(state) ?? endings[endings.length - 1]);
@@ -81,13 +112,58 @@ function render() {
 
 function handleChoice(choice: Choice) {
   if (!currentEvent) return;
+  const before = { ...state.resources };
   state = applyChoice(state, currentEvent, choice);
+  pending = {
+    summary: choice.outcomeText ?? choice.text,
+    deltas: resourceDeltas(before, state.resources),
+    endsRun: Boolean(choice.endsRun) || state.week >= 6,
+  };
+  renderOutcome();
+}
 
-  if (choice.endsRun || state.week >= 6) {
+function renderOutcome() {
+  if (!pending) return;
+  const continueLabel = pending.endsRun ? "See the review" : "Next week";
+  const deltaLines = pending.deltas
+    .map(
+      (d) =>
+        `<li>${RESOURCE_LABELS[d.key]} ${signedDelta(d.after - d.before)} → ${d.after}</li>`
+    )
+    .join("");
+
+  app.innerHTML = `
+    <div class="desktop outcome">
+      <header>
+        <div class="week">Week ${state.week}</div>
+        <div class="resources">
+          <span>Progress: ${state.resources.progress}</span>
+          <span>Confidence: ${state.resources.confidence}</span>
+          <span>Trust: ${state.resources.trust}</span>
+          <span>Energy: ${state.resources.energy}</span>
+        </div>
+      </header>
+      <main>
+        <h2>After that</h2>
+        <p>${pending.summary}</p>
+        ${deltaLines ? `<ul class="deltas">${deltaLines}</ul>` : ""}
+        <div class="choices">
+          <button id="continue">${continueLabel}</button>
+        </div>
+      </main>
+    </div>
+  `;
+
+  document.getElementById("continue")?.addEventListener("click", continueAfterOutcome);
+}
+
+function continueAfterOutcome() {
+  const shouldEnd = pending?.endsRun ?? false;
+  pending = null;
+  if (shouldEnd) {
     finishQuarter();
     return;
   }
-
   state = advanceWeek(state);
   render();
 }
@@ -118,6 +194,7 @@ function renderEnding(ending: Ending) {
     </div>
   `;
   document.getElementById("restart")?.addEventListener("click", () => {
+    pending = null;
     state = createInitialState();
     render();
   });
