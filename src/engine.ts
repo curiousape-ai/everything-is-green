@@ -1,11 +1,4 @@
-import type {
-  GameState,
-  Event,
-  Choice,
-  Condition,
-  Ending,
-  HistoryEntry,
-} from "./types";
+import type { GameState, Event, Choice, Condition, Ending } from "./types";
 import { events, endings } from "./events";
 
 export function createInitialState(): GameState {
