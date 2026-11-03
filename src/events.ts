@@ -238,13 +238,13 @@ export const events: Event[] = [
   },
   {
     id: "friday-demo-pressure",
-    title: "Two slots left",
+    title: "You only have time for two",
     conditions: [
       { type: "week", min: 5, max: 5 },
       { type: "notSeen", eventId: "friday-demo-pressure" },
     ],
     weight: 15,
-    text: "You have two attention slots left. Your engineer needs a decision to finish the change that helps customers. Your manager needs the board slide. A mandatory meeting has just landed in your calendar.",
+    text: "Your engineer needs a decision on the customer change. Your manager needs the board slide. A mandatory meeting has just landed. You only have time for two of them. The evening is the only way to do all three.",
     slots: ["The customer change", "The board slide", "The mandatory meeting"],
     choices: [
       {
