@@ -7,15 +7,10 @@ import {
   advanceWeek,
 } from "./engine";
 import { endings } from "./events";
+import { JOB_LABELS, signedChange } from "./desk";
 import type { GameState, Event, Choice, Ending, ResourceKey } from "./types";
 
 const RESOURCE_ORDER: ResourceKey[] = ["progress", "confidence", "trust", "energy"];
-const RESOURCE_LABELS: Record<ResourceKey, string> = {
-  progress: "Progress",
-  confidence: "Confidence",
-  trust: "Trust",
-  energy: "Energy",
-};
 
 const app = document.querySelector<HTMLDivElement>("#app")!;
 
@@ -45,10 +40,6 @@ function resourceDeltas(
   }));
 }
 
-function signedDelta(delta: number): string {
-  return delta > 0 ? `+${delta}` : `\u2212${Math.abs(delta)}`;
-}
-
 function resourceBand(key: ResourceKey, value: number): "green" | "held" | "slipped" {
   if (key === "confidence") {
     if (value >= 70) return "green";
@@ -63,7 +54,7 @@ function resourceBand(key: ResourceKey, value: number): "green" | "held" | "slip
 function resourceStrip(resources: Record<ResourceKey, number>): string {
   return RESOURCE_ORDER.map(
     (key) =>
-      `<span class="resource ${resourceBand(key, resources[key])}">${RESOURCE_LABELS[key]}: ${resources[key]}</span>`
+      `<span class="resource ${resourceBand(key, resources[key])}">${JOB_LABELS[key]} ${resources[key]}</span>`
   ).join("");
 }
 
@@ -183,7 +174,7 @@ function renderOutcome() {
   const deltaLines = pending.deltas
     .map(
       (d) =>
-        `<li>${RESOURCE_LABELS[d.key]} ${signedDelta(d.after - d.before)} → ${d.after}</li>`
+        `<li>${JOB_LABELS[d.key]} ${signedChange(d.after - d.before)} → ${d.after}</li>`
     )
     .join("");
 
