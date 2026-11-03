@@ -76,28 +76,99 @@ button:hover {
   margin-top: 0;
 }
 
+.ending {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
 .share-card {
-  background: #fafafa;
-  border: 1px solid #e0e0e0;
-  border-radius: 6px;
-  padding: 1rem;
-  margin: 1.5rem 0;
+  width: min(400px, 100%);
+  min-height: 520px;
+  box-sizing: border-box;
+  margin: 1.5rem auto;
+  padding: 28px 28px 24px;
+  background: #f3f6f3;
+  color: #14221a;
+  border: 1px solid #c9d5cc;
+  border-radius: 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.share-kicker {
+  margin: 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: #5d6b62;
+}
+
+.share-green {
+  margin: 1.1rem 0 0;
+  font-size: 5.5rem;
+  font-weight: 700;
+  letter-spacing: -0.05em;
+  line-height: 0.9;
+  color: #1f7a45;
+}
+
+.share-green span {
+  font-size: 2rem;
+  margin-left: 0.1rem;
+}
+
+.share-caption {
+  margin: 0.35rem 0 1.4rem;
+  color: #3d4f44;
 }
 
 .share-card h3 {
-  margin: 0 0 0.5rem 0;
-  font-size: 0.9rem;
-  letter-spacing: 0.05em;
-  color: #666;
+  margin: 0 0 0.6rem;
+  font-size: 1.45rem;
+  line-height: 1.25;
+  letter-spacing: 0;
+  color: #14221a;
 }
 
 .share-card ul {
-  margin: 0.5rem 0;
+  margin: 0;
   padding-left: 1.2rem;
 }
 
+.share-customer {
+  margin: 1rem 0 0;
+  font-weight: 600;
+}
+
+.share-card.board-noticed .share-green {
+  color: #128a38;
+}
+
+.share-card.still-green .share-green {
+  color: #2f8f55;
+}
+
+.share-card.useful-release .share-green {
+  color: #1d6b4a;
+}
+
+.share-card.honest-account {
+  background: #f7f3ef;
+  border-color: #e0d2c8;
+}
+
+.share-card.honest-account .share-green {
+  color: #8a4b32;
+}
+
 .decision {
-  margin-top: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
   font-style: italic;
-  color: #444;
+  color: #3d4a42;
+}
+
+#restart {
+  align-self: center;
 }

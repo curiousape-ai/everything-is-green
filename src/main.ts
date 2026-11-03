@@ -92,18 +92,26 @@ function handleChoice(choice: Choice) {
   render();
 }
 
+function customerLine(progress: number): string {
+  return progress >= 60 ? "A customer was helped." : "Customer outcome: not on the slide.";
+}
+
 function renderEnding(ending: Ending) {
   const last = state.history[state.history.length - 1];
+  const green = state.resources.confidence;
   app.innerHTML = `
     <div class="desktop ending">
       <h1>${ending.title}</h1>
       <p>${ending.text}</p>
-      <div class="share-card">
-        <h3>QUARTERLY PERFORMANCE REVIEW</h3>
-        <p><strong>${ending.shareCard.headline}</strong></p>
+      <div class="share-card ${ending.id}">
+        <p class="share-kicker">Quarterly review</p>
+        <p class="share-green">${green}<span>%</span></p>
+        <p class="share-caption">How green you stayed</p>
+        <h3>${ending.shareCard.headline}</h3>
         <ul>
           ${ending.shareCard.lines.map((l) => `<li>${l}</li>`).join("")}
         </ul>
+        <p class="share-customer">${customerLine(state.resources.progress)}</p>
         ${last ? `<p class="decision">Decision that mattered: ${last.summary}</p>` : ""}
       </div>
       <button id="restart">Restart</button>
